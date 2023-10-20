@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/fatih/color"
 	"github.com/google/uuid"
 	commonpb "go.temporal.io/api/common/v1"
 	enumspb "go.temporal.io/api/enums/v1"
@@ -245,4 +246,34 @@ func LoadTLSConfig(clientCertPath, clientKeyPath string) (*tls.Config, error) {
 		return nil, errors.New("got TLS key with no cert")
 	}
 	return nil, nil
+}
+
+func LogToFile(msg string, prefix string, colorName string) {
+	var colorObj color.Attribute
+	switch colorName {
+	case "red":
+		colorObj = color.FgRed
+	case "green":
+		colorObj = color.FgGreen
+	case "blue":
+		colorObj = color.FgBlue
+	default:
+		colorObj = color.FgBlack
+	}
+	colorFn := color.New(colorObj).SprintfFunc()
+	file, err := os.OpenFile("/tmp/log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return
+	}
+	defer file.Close()
+
+	if _, err := file.WriteString(colorFn(fmt.Sprintf("%s %s: %s", time.Now().Format("15:04:05.999"), prefix, msg))); err != nil {
+		fmt.Println("Error writing to file:", err)
+		return
+	}
+
+	if err := file.Sync(); err != nil {
+		fmt.Println("Error flushing file:", err)
+	}
 }

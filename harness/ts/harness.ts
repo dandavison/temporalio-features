@@ -1,4 +1,6 @@
 import { randomUUID } from 'node:crypto';
+import * as colors from 'ansi-colors';
+import * as ffs from 'fs';
 import {
   Connection,
   WorkflowClient,
@@ -314,4 +316,31 @@ export async function retry(fn: () => Promise<boolean>, retries = 3, duration = 
     await setTimeout(duration);
   }
   return false;
+}
+
+function colorFn(color: string): (s: string) => string {
+  switch (color) {
+    case 'red':
+      return colors.red;
+    case 'green':
+      return colors.green;
+    case 'blue':
+      return colors.blue;
+    default:
+      return (s: string) => s;
+  }
+}
+
+export function logToFile(msg: string, prefix: string, color: string) {
+  const time: string = new Date().toISOString().slice(11, 23);
+  const path = '/tmp/log';
+
+  try {
+    const fd = ffs.openSync(path, 'a');
+    ffs.writeSync(fd, colorFn(color)(time + ' ' + prefix + ': ' + msg));
+    ffs.fsyncSync(fd);
+    ffs.closeSync(fd);
+  } catch (err) {
+    console.error('An error occurred:', err);
+  }
 }
