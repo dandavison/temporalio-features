@@ -33,6 +33,8 @@ import (
 	schedule_cron "github.com/temporalio/features/features/schedule/cron"
 	schedule_pause "github.com/temporalio/features/features/schedule/pause"
 	schedule_trigger "github.com/temporalio/features/features/schedule/trigger"
+	signal_activities "github.com/temporalio/features/features/signal/activities"
+	signal_basic "github.com/temporalio/features/features/signal/basic"
 	signal_external "github.com/temporalio/features/features/signal/external"
 	telemetry_metrics "github.com/temporalio/features/features/telemetry/metrics"
 	update_activities "github.com/temporalio/features/features/update/activities"
@@ -83,6 +85,8 @@ func init() {
 		schedule_cron.Feature,
 		schedule_pause.Feature,
 		schedule_trigger.Feature,
+		signal_activities.Feature,
+		signal_basic.Feature,
 		signal_external.Feature,
 		telemetry_metrics.Feature,
 		update_activities.Feature,
